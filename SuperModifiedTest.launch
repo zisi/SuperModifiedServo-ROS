@@ -1,0 +1,4 @@
+<launch>
+	<!-- Test launch file -->
+	<node name="SuperModifiedTest" pkg="super_modified_servo" type="SuperModifiedTest" output="screen"/>
+</launch>
