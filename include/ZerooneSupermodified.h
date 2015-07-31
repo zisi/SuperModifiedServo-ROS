@@ -36,12 +36,12 @@
 #include "zoProtocol.h"
 
 /*Configuration defines*/
-#define ZO_PROTOCOL_COMMAND_RESPONSE_TIMEOUT_US			200000
+#define ZO_PROTOCOL_COMMAND_RESPONSE_TIMEOUT_US 200000
 /***Warnings***/
-#define ZO_WARNING_NONE									0
-#define ZO_WARNING_WRONG_LRC          104
-#define ZO_WARNING_RESPONSE_TIMEOUT   105
-#define ZO_WARNING_SERIAL_PORT        106
+#define ZO_WARNING_NONE 0
+#define ZO_WARNING_WRONG_LRC 104
+#define ZO_WARNING_RESPONSE_TIMEOUT 105
+#define ZO_WARNING_SERIAL_PORT 106
 
 int serialPortOpen(const char *);
 int serialPortClose(int);
@@ -59,7 +59,7 @@ void setProfileAcceleration(int, uint8_t, uint32_t);
 void setProfileConstantVelocity(int, uint8_t, uint32_t);
 void setCurrentLimit(int, uint8_t, uint16_t);
 void setDurationForCurrentLimit(int, uint8_t, uint16_t);
-void moveWithVelocity(int, uint8_t,int32_t);
+void moveWithVelocity(int, uint8_t, int32_t);
 void moveToAbsolutePosition(int, uint8_t, int64_t);
 void moveToRelativePosition(int, uint8_t, int64_t);
 void profiledMoveWithVelocity(int, uint8_t, int32_t);
@@ -71,8 +71,9 @@ void setRelativePositionSetpoint(int, uint8_t, int64_t);
 void setProfiledVelocitySetpoint(int, uint8_t, int32_t);
 void setProfiledAbsolutePositionSetpoint(int, uint8_t, int64_t);
 void setProfiledRelativePositionSetpoint(int, uint8_t, int64_t);
-void configureDigitalIOs(int, uint8_t,bool,bool,bool);
-void setDigitalOutputs(int, uint8_t,bool,bool,bool);
+void setNodeId(int, uint8_t, uint8_t);
+void configureDigitalIOs(int, uint8_t, bool, bool, bool);
+void setDigitalOutputs(int, uint8_t, bool, bool, bool);
 void resetIncrementalPosition(int, uint8_t);
 void start(int, uint8_t);
 void halt(int, uint8_t);
@@ -83,9 +84,9 @@ uint32_t getProfileAcceleration(int, uint8_t);
 uint32_t getProfileConstantVelocity(int, uint8_t);
 uint16_t getCurrentLimit(int, uint8_t);
 uint16_t getCurrentLimitDuration(int, uint8_t);
-bool getDigitalIOConfiguration(int, uint8_t,uint8_t);
-bool getDigitalIn(int, uint8_t,uint8_t);
-uint16_t getAnalogIn(int, uint8_t,uint8_t);
+bool getDigitalIOConfiguration(int, uint8_t, uint8_t);
+bool getDigitalIn(int, uint8_t, uint8_t);
+uint16_t getAnalogIn(int, uint8_t, uint8_t);
 int64_t getPosition(int, uint8_t);
 uint16_t getAbsolutePosition(int, uint8_t);
 int32_t getVelocity(int, uint8_t);
