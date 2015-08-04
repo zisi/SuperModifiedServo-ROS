@@ -303,6 +303,45 @@ void setNodeId(int fd, uint8_t nodeId, uint8_t newNodeId)
 		getResponse(fd, &p);
 }
 
+void setPGain(int fd, uint8_t nodeId, uint16_t P)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x00;
+	p.byteCount = 0x02;
+	u16ToStr(P, p.data);
+	p.lrc = calcLRC(&p);
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
+void setIGain(int fd, uint8_t nodeId, uint16_t I)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x01;
+	p.byteCount = 0x02;
+	u16ToStr(I, p.data);
+	p.lrc = calcLRC(&p);
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
+void setDGain(int fd, uint8_t nodeId, uint16_t D)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x02;
+	p.byteCount = 0x02;
+	u16ToStr(D, p.data);
+	p.lrc = calcLRC(&p);
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
 void resetIncrementalPosition(int fd, uint8_t nodeId)
 {
 	ZO_PROTOCOL_PACKET p;
@@ -561,6 +600,63 @@ uint16_t getCurrent(int fd, uint8_t nodeId)
 	p.commandID = 0x72;
 	p.byteCount = 0x00;
 	p.lrc = 0x72;
+	if( putPacketSerial(fd, &p) )
+	{
+		if( getResponse(fd, &p) )
+			return strToU16(p.data);
+		else
+			return -1;
+	}
+	else
+		return -1;
+}
+
+uint16_t getPGain(int fd, uint8_t nodeId)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x64;
+	p.byteCount = 0x00;
+	p.lrc = 0x64;
+	if( putPacketSerial(fd, &p) )
+	{
+		if( getResponse(fd, &p) )
+			return strToU16(p.data);
+		else
+			return -1;
+	}
+	else
+		return -1;
+}
+
+uint16_t getIGain(int fd, uint8_t nodeId)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x65;
+	p.byteCount = 0x00;
+	p.lrc = 0x65;
+	if( putPacketSerial(fd, &p) )
+	{
+		if( getResponse(fd, &p) )
+			return strToU16(p.data);
+		else
+			return -1;
+	}
+	else
+		return -1;
+}
+
+uint16_t getDGain(int fd, uint8_t nodeId)
+{
+	ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x66;
+	p.byteCount = 0x00;
+	p.lrc = 0x66;
 	if( putPacketSerial(fd, &p) )
 	{
 		if( getResponse(fd, &p) )
