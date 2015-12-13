@@ -19,6 +19,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#define INLINE
 #include "zoTypes.h"
 #include "zoString.h"
 #include "ZerooneSupermodified.h"
@@ -32,7 +33,7 @@ bool getCommunicationSuccess()
 {
 	bool success;
 	success = CommSuccess;	/*store to local*/
-	CommSuccess = true;		/*initialize for next comm*/	
+	CommSuccess = true;		/*initialize for next comm*/
 	return success;
 }
 
@@ -303,6 +304,20 @@ void setNodeId(int fd, uint8_t nodeId, uint8_t newNodeId)
 		getResponse(fd, &p);
 }
 
+void setBaudRate(int fd, uint8_t nodeId, uint32_t baudRate)
+{
+    ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x17;
+	p.byteCount = 0x04;
+	u32ToStr(baudRate, p.data);
+	p.lrc = calcLRC(&p);
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
+
 void setPGain(int fd, uint8_t nodeId, uint16_t P)
 {
 	ZO_PROTOCOL_PACKET p;
@@ -337,6 +352,19 @@ void setDGain(int fd, uint8_t nodeId, uint16_t D)
 	p.commandID = 0x02;
 	p.byteCount = 0x02;
 	u16ToStr(D, p.data);
+	p.lrc = calcLRC(&p);
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
+void setAntiWindup(int fd, uint8_t nodeId, uint32_t anti_windup)
+{
+    ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x1D;
+	p.byteCount = 0x04;
+	u32ToStr(anti_windup, p.data);
 	p.lrc = calcLRC(&p);
 	if( putPacketSerial(fd, &p) )
 		getResponse(fd, &p);
@@ -398,6 +426,22 @@ void resetErrors(int fd, uint8_t nodeId)
 	p.commandID = 0x1E;
 	p.byteCount = 0x00;
 	p.lrc = 0x1E;
+	if( putPacketSerial(fd, &p) )
+		getResponse(fd, &p);
+}
+
+void setErrorReaction(int fd, uint8_t nodeId, uint8_t resp[])
+{
+    ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x1C;
+	p.byteCount = 0x14;
+    for (int i=0; i<20; i++)
+    {
+        p.data[i] = resp[i];
+    }
+    p.lrc = calcLRC(&p);
 	if( putPacketSerial(fd, &p) )
 		getResponse(fd, &p);
 }
@@ -668,6 +712,49 @@ uint16_t getDGain(int fd, uint8_t nodeId)
 		return -1;
 }
 
+uint32_t getAntiWindup(int fd, uint8_t nodeId)
+{
+    ZO_PROTOCOL_PACKET p;
+	p.addressedNodeID = nodeId;
+	p.ownNodeID = 0x01;
+	p.commandID = 0x74;
+	p.byteCount = 0x00;
+	p.lrc = 0x74;
+	if( putPacketSerial(fd, &p) )
+	{
+		if( getResponse(fd, &p) )
+			return strToU32(p.data);
+		else
+			return -1;
+	}
+	else
+		return -1;
+}
+
+bool getErrorReaction(int fd, uint8_t nodeId, uint8_t *resp)
+{
+    ZO_PROTOCOL_PACKET p;
+    p.addressedNodeID = nodeId;
+    p.ownNodeID = 0x01;
+    p.commandID = 0x73;
+    p.byteCount = 0x00;
+    p.lrc = 0x73;
+    if( putPacketSerial(fd, &p) )
+    {
+        if( getResponse(fd, &p) )
+        {
+            for(int i=0; i<20; i++)
+                resp[i] = p.data[i];
+            return true;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
+
+}
+
 void broadCastDoMove(int fd)
 {
 	ZO_PROTOCOL_PACKET p;
@@ -713,7 +800,7 @@ void broadcastStop(int fd)
 }
 
 /*--------------------------------------------------------------------*/
-int serialPortOpen(const char* serialport)
+int serialPortOpen(const char* serialport, speed_t baud)
 {
 	struct termios options;
 	int status, fd;
@@ -728,7 +815,6 @@ int serialPortOpen(const char* serialport)
 	fcntl (fd, F_SETFL, O_RDWR) ;
 	tcgetattr(fd, &options);
 	cfmakeraw (&options);
-	speed_t baud = B57600;
 	cfsetispeed(&options, baud);
 	cfsetospeed(&options, baud);
 	/* 8N1 */
@@ -739,7 +825,7 @@ int serialPortOpen(const char* serialport)
 	options.c_cflag |= CS8;
 	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 	options.c_cc[VMIN]  = 0;
-	options.c_cc[VTIME] = 100;
+	options.c_cc[VTIME] = 0;
 	tcsetattr(fd, TCSANOW | TCSAFLUSH, &options);
 	ioctl(fd, TIOCMGET, &status);
 	status |= TIOCM_DTR;
@@ -775,6 +861,8 @@ int serialTimeout (int fd, unsigned int usec)
 
 bool getResponse(int fd, ZO_PROTOCOL_PACKET* p)
 {
+    tcflush(fd, TCIFLUSH);
+
 	while( !(getPacketSerial(fd, p)) )
 	{
 		if (serialTimeout(fd, ZO_PROTOCOL_COMMAND_RESPONSE_TIMEOUT_US) == 0)
@@ -786,9 +874,9 @@ bool getResponse(int fd, ZO_PROTOCOL_PACKET* p)
 		}
 	}
 	if( CommSuccess == true )
-	{	
+	{
 		if( p->lrc != calcLRC(p) )
-		{	
+		{
 			CommSuccess = false;
 			Warning = ZO_WARNING_WRONG_LRC;
 		}
@@ -828,7 +916,7 @@ bool putPacketSerial(int fd, const ZO_PROTOCOL_PACKET* packet)
 	writeByte(fd, ZO_PROTOCOL_HEADER_1);
 	writeByte(fd, packet->addressedNodeID);
 	writeByte(fd, packet->ownNodeID);
-	writeByte(fd, packet->commandID);	
+	writeByte(fd, packet->commandID);
 	writeByte(fd, packet->byteCount);
 	for(i = 0; i < packet->byteCount; i++)
 		writeByte(fd, packet->data[i]);
@@ -890,7 +978,7 @@ bool getPacketSerial(int fd, ZO_PROTOCOL_PACKET* packet)
 			break;
 		case WAIT_ON_LRC:
 			packet->lrc = c;
-			decoderState = WAIT_ON_HEADER_0; 
+			decoderState = WAIT_ON_HEADER_0;
 			isWholePacket = true;
 			break;
 	}

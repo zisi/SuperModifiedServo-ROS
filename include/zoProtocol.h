@@ -19,6 +19,10 @@
 
 #define ZO_PROTOCOL_COMMAND_RESPONSE_TIMEOUT_MS		200
 
+#define ZO_PROTOCOL_DO_NOTHING                      0x00
+#define ZO_PROTOCOL_STOP                            0x01
+#define ZO_PROTOCOL_HALT                            0x02
+
 typedef struct {
 	uint8_t addressedNodeID;
 	uint8_t ownNodeID;
