@@ -43,6 +43,7 @@ and change some parameters. The implemented functions are:
 * setID: change the "Motor ID" of the super_modified_servo to "New motor ID"
 * setBaud: change the baud rate to "Set baud rate"
 * error_reaction: set and get error reaction, the "errorReaction[20]" is default.
+
 The user can type the above commands in the "Send command" field.
 Also information or error messages appear in the "roslaunch" terminal.
 In the "Velocity set point" field, the user can change the velocity of super_modified_servo.
@@ -60,4 +61,4 @@ rosrun rqt_plot rqt_plot
 
 # Known problems
 * If the user in your platform does not have permissions to read/write to serial device, run the roslaunch as super user or give him the permissions for this.
-* Communication with more than one super_modified_servo in high rate communication causes problem. 
+* Communication with more than one super_modified_servo in high rate communication causes problem.
