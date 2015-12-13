@@ -1,0 +1,13 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~motor_id" : \b [int] Motor ID min: 4, default: 5, max: 255
+- \b "~new_motor_id" : \b [int] New motor ID min: 4, default: 5, max: 255
+- \b "~baudRate" : \b [int] Set baud rate min: 600, default: 115200, max: 115200
+- \b "~p_gain" : \b [double] P gain min: 0.0, default: 145.0, max: 600.0
+- \b "~i_gain" : \b [double] I gain min: 0.0, default: 15.0, max: 600.0
+- \b "~d_gain" : \b [double] D gain min: 0.0, default: 40.0, max: 600.0
+- \b "~set_point" : \b [double] Velocity set point min: -10.0, default: 0.0, max: 10.0
+- \b "~command" : \b [str] Send command min: , default: , max: 
+

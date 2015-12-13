@@ -1,4 +1,4 @@
 <launch>
-	<!-- Test launch file -->
-	<node name="SuperModifiedTest" pkg="super_modified_servo" type="SuperModifiedTest" output="screen"/>
+	<!-- Commander launch file -->
+	<node name="SuperModifiedCommander" pkg="super_modified_servo" type="Commander" output="screen"/>
 </launch>
