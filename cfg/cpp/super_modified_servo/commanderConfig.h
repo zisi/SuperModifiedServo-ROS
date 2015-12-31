@@ -440,7 +440,7 @@ commanderConfig::GroupDescription<commanderConfig::DEFAULT, commanderConfig> Def
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __max__.p_gain = 600.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __default__.p_gain = 145.0;
+      __default__.p_gain = 0.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       Default.abstract_parameters.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("p_gain", "double", 0, "P gain", "", &commanderConfig::p_gain)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
@@ -450,7 +450,7 @@ commanderConfig::GroupDescription<commanderConfig::DEFAULT, commanderConfig> Def
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __max__.i_gain = 600.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __default__.i_gain = 15.0;
+      __default__.i_gain = 0.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       Default.abstract_parameters.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("i_gain", "double", 0, "I gain", "", &commanderConfig::i_gain)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
@@ -460,21 +460,21 @@ commanderConfig::GroupDescription<commanderConfig::DEFAULT, commanderConfig> Def
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __max__.d_gain = 600.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __default__.d_gain = 40.0;
+      __default__.d_gain = 0.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       Default.abstract_parameters.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("d_gain", "double", 0, "D gain", "", &commanderConfig::d_gain)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __param_descriptions__.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("d_gain", "double", 0, "D gain", "", &commanderConfig::d_gain)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __min__.set_point = -10.0;
+      __min__.set_point = -70.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __max__.set_point = 10.0;
+      __max__.set_point = 90.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __default__.set_point = 0.0;
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      Default.abstract_parameters.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("set_point", "double", 0, "Velocity set point", "", &commanderConfig::set_point)));
+      Default.abstract_parameters.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("set_point", "double", 0, "Position set point", "", &commanderConfig::set_point)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
-      __param_descriptions__.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("set_point", "double", 0, "Velocity set point", "", &commanderConfig::set_point)));
+      __param_descriptions__.push_back(commanderConfig::AbstractParamDescriptionConstPtr(new commanderConfig::ParamDescription<double>("set_point", "double", 0, "Position set point", "", &commanderConfig::set_point)));
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"
       __min__.command = "";
 //#line 259 "/home/azisi/ros_catkin_ws/install_isolated/lib/python2.7/site-packages/dynamic_reconfigure/parameter_generator.py"

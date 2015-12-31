@@ -1,9 +1,9 @@
-# Super Modified Servo - ROS
+## Super Modified Servo - ROS
 This repository contains C library that used from ROS in order to control [Super Modified Servo](http://www.01mechatronics.com/product/supermodified-v30-rc-servos).
 It is inspired by [this arduino library](http://www.01mechatronics.com/support/downloads).
 The description for all functions you can find [here](http://www.01mechatronics.com/sites/default/files/docs/SuperModified.V3.Datasheet.pdf).
 This ROS package tested in fedora 22 with ROS indigo - 1.11.14.
-# Installation
+## Installation
 To install the ROS package, clone the repository files in your ROS workspace:
 ```bash
 roscd
@@ -12,7 +12,7 @@ git clone https://github.com/zisi/SuperModifiedServo-ROS.git
 cd ..
 catkin_make #Build the package
 ```
-# Testing
+## Testing
 Connect the controller to USB-RS485 or USB-UART as describe [here](http://www.01mechatronics.com/support/gettingstarted/test485).
 To find the device name:
 ```bash
@@ -43,6 +43,8 @@ and change some parameters. The implemented functions are:
 * setID: change the "Motor ID" of the super_modified_servo to "New motor ID"
 * setBaud: change the baud rate to "Set baud rate"
 * error_reaction: set and get error reaction, the "errorReaction[20]" is default.
+* setGain: set the gains of PID position controller to P gain, I gain, D gain values.
+* getGain: get the gains of PID position controller.
 
 The user can type the above commands in the "Send command" field.
 Also information or error messages appear in the "roslaunch" terminal.
@@ -59,6 +61,9 @@ rosrun rqt_plot rqt_plot
 ```
 <img src="https://raw.github.com/zisi/SuperModifiedServo-ROS/master/pics/rqt_plot.png" width="80%" height="80%" />
 
-# Known problems
+## License
+#GPLv2.1
+
+## Known problems
 * If the user in your platform does not have permissions to read/write to serial device, run the roslaunch as super user or give him the permissions for this.
 * Communication with more than one super_modified_servo in high rate communication causes problem.

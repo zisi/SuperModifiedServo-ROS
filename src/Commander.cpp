@@ -1,8 +1,26 @@
+/*
+  ZeroOne Supermodified Controller API for ROS.
+  Copyright (c) 2015 Agisilaos Zisimatos.   All right reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #include "ros/ros.h"
 extern "C"{
     #include "ZerooneSupermodified.h"
 }
-#include "super_modified_servo/Command.h"
 #include <dynamic_reconfigure/server.h>
 #include <super_modified_servo/commanderConfig.h>
 #include "sensor_msgs/JointState.h"
@@ -17,29 +35,29 @@ int fd;
 int motor_id;
 int new_motor_id;
 int baudRate;
-double kp;
-double ki;
-double kd;
+uint16_t kp;
+uint16_t ki;
+uint16_t kd;
 double set_point;
 bool start_flag = false;
 
 void CommanderCallBack(super_modified_servo::commanderConfig &config, uint32_t level)
 {
-	if (config.command == "search")
-	{
-		for (motor_id = 4; motor_id < MaxNumSMS; motor_id++)
-		{
+    if (config.command == "search")
+    {
+        for (motor_id = 4; motor_id < MaxNumSMS; motor_id++)
+        {
             start(fd, motor_id);
             sleep(1);
-			printf("Start Node ID %d\n", motor_id);
-			if (getCommunicationSuccess())
-				printf("ID is %d\n", motor_id);
+            printf("Start Node ID %d\n", motor_id);
+            if (getCommunicationSuccess())
+                printf("ID is %d\n", motor_id);
             resetErrors(fd, motor_id);
             sleep(1);
             stop(fd, motor_id);
-			printf("Stop Node ID %d\n", motor_id);
-		}
-	}
+            printf("Stop Node ID %d\n", motor_id);
+        }
+    }
     if (config.command == "start")
     {
         printf("[INFO] Start\n");
@@ -74,9 +92,9 @@ void CommanderCallBack(super_modified_servo::commanderConfig &config, uint32_t l
     {
         printf("[INFO] Error reaction\n");
         uint8_t resp[20];
-        uint8_t errorReaction[20] = {0x01, 0x02, 0x02, 0x01, 0x01, 0x00, 0x00,
-             0x00, 0x00, 0x00, 0x02, 0x02, 0x00, 0x01, 0x02, 0x02, 0x02, 0x02,
-             0x02, 0x00};
+        uint8_t errorReaction[20] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02,
+             0x02, 0x01};
         setErrorReaction(fd, motor_id, errorReaction);
         sleep(3);
         if (getCommunicationSuccess() == false)
@@ -87,6 +105,22 @@ void CommanderCallBack(super_modified_servo::commanderConfig &config, uint32_t l
         getErrorReaction(fd, motor_id, resp);
         for (int i=0; i<20; i++)
             printf("D[%d]: %d\n", i, resp[i]);
+    }
+    if (config.command == "setGain")
+    {
+        printf("[INFO] Set Gain: \n");
+        setPGain(fd, motor_id, kp);
+        setIGain(fd, motor_id, ki);
+        setDGain(fd, motor_id, kd);
+        printf("[INFO] kp %d \n", getPGain(fd, motor_id));
+        printf("[INFO] ki %d \n", getIGain(fd, motor_id));
+        printf("[INFO] kd %d \n", getDGain(fd, motor_id));
+    }
+    if (config.command == "getGain")
+    {
+        printf("[INFO] kp %d \n", getPGain(fd, motor_id));
+        printf("[INFO] ki %d \n", getIGain(fd, motor_id));
+        printf("[INFO] kd %d \n", getDGain(fd, motor_id));
     }
 
     motor_id = config.motor_id;
@@ -100,25 +134,25 @@ void CommanderCallBack(super_modified_servo::commanderConfig &config, uint32_t l
 
 double ticks2deg(signed int ticks)
 {
-	return (double)360*ticks/(double)Max_Absolute_Position;
+    return (double)360*ticks/(double)Max_Absolute_Position;
 }
 
 signed int deg2ticks(double deg)
 {
-	return (signed int)deg*Max_Absolute_Position/360;
+    return (signed int)deg*Max_Absolute_Position/360;
 }
 
 int main(int argc, char **argv)
 {
-  	ros::init(argc, argv, "commander");
-  	dynamic_reconfigure::Server<super_modified_servo::commanderConfig> srv;
-  	dynamic_reconfigure::Server<super_modified_servo::commanderConfig>::CallbackType f;
-  	f = boost::bind(&CommanderCallBack, _1, _2);
-  	srv.setCallback(f);
+    ros::init(argc, argv, "commander");
+    dynamic_reconfigure::Server<super_modified_servo::commanderConfig> srv;
+    dynamic_reconfigure::Server<super_modified_servo::commanderConfig>::CallbackType f;
+    f = boost::bind(&CommanderCallBack, _1, _2);
+    srv.setCallback(f);
 
     ros::NodeHandle n;
     ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("/JointsState", 1000);
- 	ros::Rate loop_rate(200);
+    ros::Rate loop_rate(200);
 
     fd = serialPortOpen("/dev/ttyUSB0", B115200);
     sensor_msgs::JointState joint_state_msg;
@@ -139,7 +173,7 @@ int main(int argc, char **argv)
                 resetErrors(fd, motor_id);;
                 printf("[ERROR]: %d \n", getWarning());
             }
-            moveWithVelocity(fd, motor_id, deg2ticks(set_point));
+            moveToAbsolutePosition(fd, motor_id, deg2ticks(set_point));
             joint_state_msg.header.stamp = ros::Time::now();
             sprintf(motor_name, "ID:%d", motor_id);
             joint_state_msg.name[0] = motor_name;
@@ -153,5 +187,5 @@ int main(int argc, char **argv)
     }
 
     serialPortClose(fd);
-  	return 0;
+    return 0;
 }
