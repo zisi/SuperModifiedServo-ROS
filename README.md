@@ -62,7 +62,7 @@ rosrun rqt_plot rqt_plot
 <img src="https://raw.github.com/zisi/SuperModifiedServo-ROS/master/pics/rqt_plot.png" width="80%" height="80%" />
 
 ## License
-#GPLv2.1
+#LGPLv2.1
 
 ## Known problems
 * If the user in your platform does not have permissions to read/write to serial device, run the roslaunch as super user or give him the permissions for this.
