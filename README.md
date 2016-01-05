@@ -22,7 +22,7 @@ Then change the device name in src/Commander.cpp
 
     int fd = serialPortOpen("device name", B"baud rate");
 
-for example serialPortOpen("/dev/ttyUSB0", B115200).
+for example serialPortOpen("/dev/ttyUSB0", B115200). The default baud rate is 57600.
 
 For testing run the launch file:
 ```bash
@@ -41,14 +41,18 @@ and change some parameters. The implemented functions are:
 * stop: stop the super_modified_servo with ID "Motor ID"
 * reset: run the "resetIncrementalPosition()" function, with ID "Motor ID"
 * setID: change the "Motor ID" of the super_modified_servo to "New motor ID"
-* setBaud: change the baud rate to "Set baud rate"
+* setBaud: change the baud rate to "Set baud rate", change the
+
+    int fd = serialPortOpen("device name", B"baud rate");
+
+in src/Commander.cpp to new baud rate and build the package.
 * error_reaction: set and get error reaction, the "errorReaction[20]" is default.
 * setGain: set the gains of PID position controller to P gain, I gain, D gain values.
 * getGain: get the gains of PID position controller.
 
 The user can type the above commands in the "Send command" field.
 Also information or error messages appear in the "roslaunch" terminal.
-In the "Velocity set point" field, the user can change the velocity of super_modified_servo.
+In the "set point" field, the user can change the position of super_modified_servo.
 In the "P gain", "I gain", "D gain", the user can change the control gains of super_modified_servo.
 
 The state of motor is published in /JointsState topic:
