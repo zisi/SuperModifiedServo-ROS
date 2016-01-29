@@ -73,7 +73,9 @@ void CommanderCallBack(super_modified_servo::commanderConfig &config, uint32_t l
     if (config.command == "reset")
     {
         printf("[INFO] Reset\n");
-        resetIncrementalPosition(fd, motor_id);
+        stop(fd, motor_id);
+        sleep(1);
+        start(fd, motor_id);
     }
     if (config.command == "setID")
     {
@@ -173,7 +175,6 @@ int main(int argc, char **argv)
                 resetErrors(fd, motor_id);;
                 printf("[ERROR]: %d \n", getWarning());
             }
-            moveToAbsolutePosition(fd, motor_id, deg2ticks(set_point));
             joint_state_msg.header.stamp = ros::Time::now();
             sprintf(motor_name, "ID:%d", motor_id);
             joint_state_msg.name[0] = motor_name;
@@ -181,6 +182,9 @@ int main(int argc, char **argv)
             joint_state_msg.velocity[0] = ticks2deg(getVelocity(fd, motor_id));
             joint_state_msg.effort[0] = getCurrent(fd, motor_id);
             joint_pub.publish(joint_state_msg);
+            // profiledMoveToAbsolutePosition(fd, motor_id, deg2ticks(set_point));
+            // moveToAbsolutePosition(fd, motor_id, deg2ticks(set_point));
+            moveWithVelocity(fd, motor_id, deg2ticks(set_point));
         }
         ros::spinOnce();
         loop_rate.sleep();

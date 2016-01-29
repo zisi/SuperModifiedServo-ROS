@@ -37,7 +37,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  cfg/cpp
+  #cfg/cpp
 )
 ## Declare a cpp executable
 add_executable(Commander src/Commander.cpp)
