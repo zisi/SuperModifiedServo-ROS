@@ -1,4 +1,0 @@
-<launch>
-	<!-- Commander launch file -->
-	<node name="SuperModifiedCommander" pkg="super_modified_servo" type="Commander" output="screen"/>
-</launch>
